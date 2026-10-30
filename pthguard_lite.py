@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """pthguard-lite: static scan of one Python site-packages/venv for .pth backdoors.
 
-Single file, Python 3.8+ standard library only. Inspects files; never executes them.
+Single file, Python 3.9+ standard library only. Inspects files; never executes them.
 
     python -I -S pthguard_lite.py /path/to/venv/lib/python3.12/site-packages
     python -I -S pthguard_lite.py --help
