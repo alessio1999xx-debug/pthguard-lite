@@ -2,7 +2,7 @@
 
 Python runs every line that starts with `import` in a .pth file inside site-packages each time the interpreter starts, which makes these files a quiet place for a supply-chain backdoor. pthguard-lite helps you list the .pth files in an environment and flag the lines that execute code, using only the standard library.
 
-- One file, Python 3.8+. Nothing to `pip install`.
+- One file, Python 3.9+. Nothing to `pip install`.
 - Safe to invoke as `python -I -S` so your own site customizations stay off.
 - Plain text report; exit code `1` when a HIGH or CRITICAL finding appears.
 
