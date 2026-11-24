@@ -6,6 +6,8 @@ Python runs every line that starts with `import` in a .pth file inside site-pack
 - Safe to invoke as `python -I -S` so your own site customizations stay off.
 - Plain text report; exit code `1` when a HIGH or CRITICAL finding appears.
 
+Need RECORD hash checks, a known-bad package list, or a JSON report? That is the full [PthGuard](https://py-forge.com/products/pthguard-python-backdoor-scanner?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite) (one-time payment, yours to keep, no subscription). A table later in this README lists what lite does and what the paid tool adds. Or get every PyForge tool, current and future, with the [All-Access Pass](https://py-forge.com/pass?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite) ($99, one payment).
+
 ## Install
 
 ```bash
@@ -37,6 +39,28 @@ python -I -S pthguard_lite.py /path/to/venv/lib/python3.12/site-packages
 python -I -S pthguard_lite.py ./suspicious.pth
 ```
 
+Example output, recorded 25 Nov 2026 (Europe/Rome) on a throwaway `site-packages` tree with one planted `.pth` line (it only prints `hb`; do not use this in a real environment). Exit code `1`.
+
+```text
+================================================================================
+                      PTHGUARD-LITE SCAN REPORT                                
+================================================================================
+Target                 : ./site-packages
+.pth Files Inspected   : 2
+Customize Hooks Found  : 0
+Findings               : 1
+Critical/High Threats  : 1
+--------------------------------------------------------------------------------
+Findings (1 total):
+
+1. [CRITICAL]  Category : MALICIOUS_PTH_HOOK
+   Path      : /tmp/demo-pth/site-packages/evil.pth
+   Details   : Dangerous payload line 1: Executable 'exec()' call found
+               line_number: 1
+               line_sample: import os, base64; exec(base64.b64decode("cHJpbnQoImhiIik="))
+================================================================================
+```
+
 Minimal GitHub Actions step (fails the job when HIGH/CRITICAL findings appear):
 
 ```yaml
@@ -56,17 +80,16 @@ Minimal GitHub Actions step (fails the job when HIGH/CRITICAL findings appear):
 
 pthguard-lite checks **one** path for risky startup hooks and prints a text report. It does not verify package integrity or scan a whole fleet.
 
-The full **[PthGuard Python backdoor scanner](https://py-forge.com/products/pthguard-python-backdoor-scanner?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite)** adds:
+| Capability | Lite (free) | Paid PthGuard |
+| --- | --- | --- |
+| Scan target | One site-packages, venv, or file | Several directories / venvs / conda prefixes in one run |
+| Flag `exec()`, base64 decoding and subprocess calls in `.pth`, `sitecustomize.py` and `usercustomize.py` | Yes | Yes |
+| Check installed files against SHA-256 hashes in `RECORD` | No | Yes (also lists unrecorded files; `--skip-records` to turn this off) |
+| Known-bad package list | No | Yes (built-in, extensible with `--known-bad-json`) |
+| Output | Plain text | Text or JSON (`--format`) |
+| `--strict` CI exit and a quarantine script you review before running | No | Yes (`--strict`, `--quarantine-script`) |
 
-- dist-info `RECORD` SHA-256 verification and unrecorded-file listing
-- offline known-bad package list (extendable JSON)
-- IOC / persistence path checks
-- many venvs, conda prefixes or a Docker rootfs in one run
-- JSON report, stricter CI exit codes, and a quarantine script you review before running
-
-One-time payment, yours to keep. No subscription.
-
-Or get every PyForge tool, current and future, with the [All-Access Pass](https://py-forge.com/pass?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite).
+One-time payment, yours to keep. No subscription. Full tool: [PthGuard](https://py-forge.com/products/pthguard-python-backdoor-scanner?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite). Or get every PyForge tool, current and future, with the [All-Access Pass](https://py-forge.com/pass?utm_source=github&utm_medium=readme&utm_campaign=pthguard-lite) ($99, one payment).
 
 ## Tests
 
